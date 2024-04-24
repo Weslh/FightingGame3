@@ -175,33 +175,40 @@ class Warrior():
 
     def attack(self, surface, target, damage):
         if self.attack_cooldown == 0:
-            # execute attack
+            # Execute attack
             self.attack_sound.play()
             self.attacking = True
+            attack_offset = 0
 
             # Define attack properties based on attack type
             if self.attack_type == 1:
                 # Attack type 1 properties
+                attack_offset = 0
                 attack_width = 2 * self.rect.width
-                damage = 25
+                attacking_height = self.rect.centery -(1/2 * self.rect.height)
+                damage = 10
             elif self.attack_type == 2:
                 # Attack type 2 properties
-                attack_width = 3 * self.rect.width
-                damage = 50
+                attack_offset = -3 * self.rect.width
+                attack_width = 5 * self.rect.width  # Adjusted to 4 times the player's width
+                attacking_height = self.rect.centery -(1/2 * self.rect.height)
+                damage = 15
 
-            
-            # Calculate the x-coordinate of the attacking rectangle based on player direction
+                # Calculate the x-coordinate of the attacking rectangle based on player direction
             if not self.flip:  # Player facing right
-                attacking_x = self.rect.right  # Attack towards the right
+                attacking_x = (self.rect.centerx + (1/2 * self.rect.width) + attack_offset)
             else:  # Player facing left
-                attacking_x = self.rect.left - (2 * self.rect.width)  # Attack towards the left
-                
-            attacking_rect = pygame.Rect(attacking_x, self.rect.y, 2 * self.rect.width, self.rect.height)
-            
+                attacking_x = ((self.rect.centerx - (1/2 * self.rect.width) - attack_width) - attack_offset)
+
+            # Create the attacking rectangle
+            attacking_rect = pygame.Rect(attacking_x, attacking_y , attack_width, self.rect.height)
+
+            # Check if the attacking rectangle collides with the target
             if attacking_rect.colliderect(target.rect):
                 target.health -= damage
                 target.hit = True
-                
+
+            # Draw the attacking rectangle on the surface
             pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
 
