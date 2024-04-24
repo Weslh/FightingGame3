@@ -13,7 +13,10 @@ class Warrior():
         self.image = self.animation_list[self.action][self.frame_index]
         self.update_time = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 80, 180))
+        self.vel_x = 0
         self.vel_y = 0
+        self.friction = 0.1
+        self.max_velocity = 10
         self.running = False
         self.jump = False
         self.attacking = False
@@ -37,13 +40,13 @@ class Warrior():
         return animation_list
 
     def move(self, screen_width, screen_height, surface, target, round_over):
-        SPEED = 10
         GRAVITY = 2
         dx = 0
         dy = 0
         self.running = False
         self.attack_type = 0
         damage = 0
+        SPEED = 0
 
         #get keypresses
         key = pygame.key.get_pressed()
@@ -55,11 +58,12 @@ class Warrior():
                 #movement
 
                 if key[pygame.K_a]:
-                    dx = -SPEED
+                    self.vel_x = -10
                     self.running = True
-                if key[pygame.K_d]:
-                    dx = SPEED
+                elif key[pygame.K_d]:
+                    self.vel_x = 10
                     self.running = True
+                
                 #jump
                 if key[pygame.K_w] and self.jump == False:
                     self.vel_y = -30
@@ -106,8 +110,13 @@ class Warrior():
             dx = - self.rect.left
         if self.rect.right + dx > screen_width:
             dx = screen_width - self.rect.right
+
         if self.rect.bottom + dy > screen_height - 110:
             self.vel_y = 0
+            if key[pygame.K_a] or key[pygame.K_d]:
+                pass
+            else:
+                self.vel_x = 0
             self.jump = False
             dy = screen_height - 110 - self.rect.bottom
 
@@ -123,8 +132,10 @@ class Warrior():
 
 
         #update player position
-        self.rect.x += dx
+        self.rect.x += self.vel_x
         self.rect.y += dy
+
+        self.acceleration_x = 0
 
     #handle animation updates
     def update(self):
@@ -185,12 +196,14 @@ class Warrior():
                 # Attack type 1 properties
                 attack_offset = 0
                 attack_width = 2 * self.rect.width
+                attacking_y = (self.rect.centery - (1/2 * self.rect.height))
                 attacking_height = self.rect.centery -(1/2 * self.rect.height)
                 damage = 10
             elif self.attack_type == 2:
                 # Attack type 2 properties
                 attack_offset = -3 * self.rect.width
-                attack_width = 5 * self.rect.width  # Adjusted to 4 times the player's width
+                attack_width = 5 * self.rect.width
+                attacking_y = (self.rect.centery - (1/2 * self.rect.height))
                 attacking_height = self.rect.centery -(1/2 * self.rect.height)
                 damage = 15
 
