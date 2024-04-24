@@ -14,6 +14,7 @@ class Wizard():
         self.update_time = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 80, 180))
         self.vel_y = 0
+        self.vel_x = 0
         self.running = False
         self.jump = False
         self.attacking = False
@@ -37,7 +38,6 @@ class Wizard():
         return animation_list
 
     def move(self, screen_width, screen_height, surface, target, round_over):
-        SPEED = 10
         GRAVITY = 2
         dx = 0
         dy = 0
@@ -55,10 +55,10 @@ class Wizard():
                 #movement
 
                 if key[pygame.K_a]:
-                    dx = -SPEED
+                    self.vel_x = -10
                     self.running = True
-                if key[pygame.K_d]:
-                    dx = SPEED
+                elif key[pygame.K_d]:
+                    self.vel_x = 10
                     self.running = True
                 #jump
                 if key[pygame.K_w] and self.jump == False:
@@ -78,10 +78,10 @@ class Wizard():
                 #movement
 
                 if key[pygame.K_LEFT]:
-                    dx = -SPEED
+                    self.vel_x = -10
                     self.running = True
-                if key[pygame.K_RIGHT]:
-                    dx = SPEED
+                elif key[pygame.K_RIGHT]:
+                    self.vel_x = 10
                     self.running = True
                 #jump
                 if key[pygame.K_UP] and self.jump == False:
@@ -108,6 +108,12 @@ class Wizard():
             dx = screen_width - self.rect.right
         if self.rect.bottom + dy > screen_height - 110:
             self.vel_y = 0
+            if key[pygame.K_a] or key[pygame.K_d] or key[pygame.K_LEFT] or key[pygame.K_RIGHT]:
+                pass
+            else:
+                self.vel_x = 0
+            if self.attacking == True:
+                self.vel_x = 0
             self.jump = False
             dy = screen_height - 110 - self.rect.bottom
 
@@ -123,7 +129,7 @@ class Wizard():
 
 
         #update player position
-        self.rect.x += dx
+        self.rect.x += self.vel_x
         self.rect.y += dy
 
     #handle animation updates
@@ -185,16 +191,16 @@ class Wizard():
                 # Attack type 1 properties
                 attack_offset = 1.75 * self.rect.width
                 attack_width = 1.5 * self.rect.width
-                attacking_y = (self.rect.centery - (1 * self.rect.height))
-                attacking_height = 1.5 * self.rect.height
-                damage = 10
+                attacking_y = (self.rect.centery - (1.5 * self.rect.height))
+                attacking_height = 2 * self.rect.height
+                damage = 20
             elif self.attack_type == 2:
                 # Attack type 2 properties
                 attack_offset = 0
                 attack_width = 3.5 * self.rect.width
                 attacking_y = (self.rect.centery - (1 * self.rect.height))
                 attacking_height = 1.5 * self.rect.height 
-                damage = 15
+                damage = 10
 
                 # Calculate the x-coordinate of the attacking rectangle based on player direction
             if not self.flip:  # Player facing right
