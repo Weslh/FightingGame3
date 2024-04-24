@@ -103,20 +103,28 @@ class Warrior():
         self.vel_y += GRAVITY
         dy += self.vel_y
 
-        #ensure player stays on screen
-        if self.rect.left + dx < 0:
-            dx = - self.rect.left
-        if self.rect.right + dx > screen_width:
-            dx = screen_width - self.rect.right
-
-        if self.rect.bottom + dy > screen_height - 110:
-            self.vel_y = 0
-            if key[pygame.K_a] or key[pygame.K_d] or key[pygame.K_LEFT] or key[pygame.K_RIGHT]:
+        #stop players from sliding
+        if self.player == 1:
+            if key[pygame.K_a] or key[pygame.K_d]:
                 pass
             else:
                 self.vel_x = 0
-            if self.attacking == True:
+        elif self.player == 2:
+            if key[pygame.K_LEFT] or key[pygame.K_RIGHT]:
+                pass
+            else:
                 self.vel_x = 0
+
+        #ensure player stays on screen
+        if self.rect.left + self.vel_x < 0:
+            self.vel_x = - self.rect.left
+        if self.rect.right + self.vel_x > screen_width:
+            self.vel_x = screen_width - self.rect.right
+        if self.rect.bottom + dy > screen_height - 110:
+            self.vel_y = 0
+            if self.jump == False:
+                if self.attacking == True:
+                    self.vel_x = 0
             self.jump = False
             dy = screen_height - 110 - self.rect.bottom
 

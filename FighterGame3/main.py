@@ -180,7 +180,6 @@ while run:
         fighter_1.flip = True
         fighter_2.flip = False
 
-
     #update fighters
     fighter_1.update()
     fighter_2.update()
